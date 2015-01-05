@@ -8,6 +8,11 @@
 FROM dockerfile/ruby
 
 # Set instructions on build.
+ONBUILD ADD apt-requirements.txt /app/
+ONBUILD RUN apt-get update && \
+  apt-get -y install $(grep -vE "^\s*#" /app/apt-requirements.txt | tr "\n" " ") && \
+  rm -rf /var/lib/apt/lists/*
+
 ONBUILD ADD Gemfile /app/
 ONBUILD ADD Gemfile.lock /app/
 ONBUILD RUN bundle install
